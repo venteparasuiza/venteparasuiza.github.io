@@ -101,7 +101,11 @@ body {
 
 /* Hero Section */
 .hero {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+background: 
+    linear-gradient(135deg, rgba(211, 47, 47, 0.8) 0%, rgba(183, 28, 28, 0.85) 100%),
+    url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80') center/cover,
+    linear-gradient(to bottom, transparent 60%, rgba(255,255,255,0.1) 80%, rgba(255,255,255,0.2) 100%),
+    radial-gradient(ellipse at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%);
   color: var(--white);
   padding: 120px var(--spacing-sm) var(--spacing-xl);
   text-align: center;
@@ -110,6 +114,19 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: 
+    polygon(0% 100%, 15% 80%, 25% 85%, 35% 75%, 50% 80%, 65% 70%, 80% 75%, 100% 65%, 100% 100%);
+  background-color: rgba(255, 255, 255, 0.1);
+  clip-path: polygon(0% 100%, 15% 80%, 25% 85%, 35% 75%, 50% 80%, 65% 70%, 80% 75%, 100% 65%, 100% 100%);
 }
 
 .hero-title {
@@ -254,6 +271,10 @@ body {
   box-shadow: var(--shadow-light);
   transition: var(--transition);
   border: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 320px; /* ← ALTURA MÍNIMA UNIFORME */
 }
 
 .offer-card:hover {
@@ -829,10 +850,12 @@ body {
     gap: var(--spacing-lg);
   }
   
-  .offers-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-lg);
-  }
+.offers-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-md);
+  align-items: start; /* ← ALINEACIÓN SUPERIOR */
+}
   
   .process-steps {
     flex-direction: row;

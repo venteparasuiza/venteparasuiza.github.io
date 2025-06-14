@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <meta name="theme-color" content="#d32f2f">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23FF0000'/%3E%3Crect x='13' y='6' width='6' height='20' fill='white'/%3E%3Crect x='6' y='13' width='20' height='6' fill='white'/%3E%3C/svg%3E">
+
     
     <!-- Primary Meta Tags -->
     <title>Vente para Suiza - Trabajar en Suiza desde España | Agencia Recruitment</title>
@@ -300,7 +302,7 @@
                 <p>Te contactamos en 24 horas</p>
             </div>
             
-<form id="cvForm" action="https://formspree.io/f/xkgbrdlw" method="POST" enctype="multipart/form-data">                <!-- Step 1: Basic Info -->
+<form id="cvForm" action="https://script.google.com/macros/s/AKfycbxEti8EKjMN_oPJugGgUbAeNlmCV-lB-DDJBzi1QPE4sdX-nqt5Vl3wbvbzktc1Q_Y/exec" method="POST" enctype="multipart/form-data">                <!-- Step 1: Basic Info -->
                 <div class="form-step active" id="step1">
                     <h3>Paso 1: Información básica</h3>
                     <div class="form-group">
@@ -373,6 +375,30 @@
                             <option value="C2">C2 - Nativo</option>
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label for="frances">Nivel de francés</label>
+                        <select id="frances" name="frances">
+                            <option value="ninguno">Sin conocimientos</option>
+                            <option value="A1">A1 - Básico</option>
+                            <option value="A2">A2 - Elemental</option>
+                            <option value="B1">B1 - Intermedio</option>
+                            <option value="B2">B2 - Intermedio alto</option>
+                            <option value="C1">C1 - Avanzado</option>
+                            <option value="C2">C2 - Nativo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="italiano">Nivel de italiano</label>
+                        <select id="italiano" name="italiano">
+                            <option value="ninguno">Sin conocimientos</option>
+                            <option value="A1">A1 - Básico</option>
+                            <option value="A2">A2 - Elemental</option>
+                            <option value="B1">B1 - Intermedio</option>
+                            <option value="B2">B2 - Intermedio alto</option>
+                            <option value="C1">C1 - Avanzado</option>
+                            <option value="C2">C2 - Nativo</option>
+                        </select>
+                    </div>
                     <div class="form-buttons">
                         <button type="button" class="btn-prev" onclick="prevStep()">Anterior</button>
                         <button type="button" class="btn-next" onclick="nextStep()">Siguiente</button>
@@ -380,12 +406,13 @@
                 </div>
 
                 <!-- Step 3: CV Upload -->
+<!-- Step 3: LinkedIn & Info -->
                 <div class="form-step" id="step3">
-                    <h3>Paso 3: Sube tu CV</h3>
+                    <h3>Paso 3: Información adicional</h3>
                     <div class="form-group">
-                        <label for="cv">CV (PDF, DOC, DOCX) *</label>
-                        <input type="file" id="cv" name="cv" accept=".pdf,.doc,.docx" required>
-                        <small>Máximo 5MB</small>
+                        <label for="linkedin">Perfil de LinkedIn</label>
+                        <input type="url" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/tu-perfil">
+                        <small>Pega aquí el enlace a tu perfil de LinkedIn</small>
                     </div>
                     <div class="form-group">
                         <label for="disponibilidad">Disponibilidad para mudanza</label>
@@ -398,20 +425,28 @@
                         </select>
                     </div>
                     <div class="form-group">
+                        <label for="salario_esperado">Salario esperado (CHF/año)</label>
+                        <select id="salario_esperado" name="salario_esperado">
+                            <option value="">Selecciona rango</option>
+                            <option value="60-80k">60.000 - 80.000 CHF</option>
+                            <option value="80-100k">80.000 - 100.000 CHF</option>
+                            <option value="100-120k">100.000 - 120.000 CHF</option>
+                            <option value="120k+">Más de 120.000 CHF</option>
+                            <option value="negociable">Negociable</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label for="comentarios">Comentarios adicionales</label>
-                        <textarea id="comentarios" name="comentarios" rows="3" placeholder="Cuéntanos algo más sobre ti o tus preferencias..."></textarea>
+                        <textarea id="comentarios" name="comentarios" rows="3" placeholder="Cuéntanos algo más sobre ti, tus preferencias de ciudad, tipo de empresa..."></textarea>
                     </div>
                     <input type="hidden" name="job_interest" id="jobInterest" value="">
-                    <input type="hidden" name="_subject" value="Nuevo CV recibido - Vente para Suiza">
+                    <input type="hidden" name="_subject" value="Nuevo candidato - Vente para Suiza">
                     
                     <div class="form-buttons">
                         <button type="button" class="btn-prev" onclick="prevStep()">Anterior</button>
-                        <button type="submit" class="btn-submit">Enviar CV</button>
+                        <button type="submit" class="btn-submit">Enviar información</button>
                     </div>
                 </div>
-            </form>
-        </div>
-    </div>
 
     <!-- WhatsApp Floating Button -->
     <a href="https://wa.me/message" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">

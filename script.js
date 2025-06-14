@@ -1,4 +1,4 @@
-// Vente para Suiza - Mobile-First JavaScript
+// Vente para Suiza - Mobile-First JavaScript - DEBUG VERSION
 // Optimized for performance and conversions
 
 'use strict';
@@ -44,6 +44,26 @@ function setupEventListeners() {
     const form = document.getElementById('cvForm');
     if (form) {
         form.addEventListener('submit', handleFormSubmit);
+        
+        // Handle Enter key in form
+        form.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                
+                // Get the focused element
+                const focusedElement = document.activeElement;
+                
+                // If it's an input, select, or textarea, move to next step or submit
+                if (focusedElement.tagName === 'INPUT' || focusedElement.tagName === 'SELECT' || focusedElement.tagName === 'TEXTAREA') {
+                    if (currentStep < 3) {
+                        nextStep();
+                    } else {
+                        // On last step, submit form
+                        form.dispatchEvent(new Event('submit'));
+                    }
+                }
+            }
+        });
     }
     
     // Prevent double-tap zoom on buttons (mobile optimization)
@@ -62,11 +82,8 @@ function setupEventListeners() {
         }
     });
     
-    // File input validation
-    const fileInput = document.getElementById('cv');
-    if (fileInput) {
-        fileInput.addEventListener('change', validateFile);
-    }
+  
+
     
     // Real-time form validation
     const inputs = document.querySelectorAll('input, select, textarea');
@@ -115,12 +132,16 @@ function closeModal() {
 
 // Form Step Navigation
 function nextStep() {
+    console.log('NextStep called, current step:', currentStep);
+    
     if (validateCurrentStep()) {
         if (currentStep < 3) {
             currentStep++;
             showStep(currentStep);
             trackEvent(`step_${currentStep}_reached`, 'form_progress');
         }
+    } else {
+        console.log('Validation failed for step:', currentStep);
     }
 }
 
@@ -132,6 +153,8 @@ function prevStep() {
 }
 
 function showStep(step) {
+    console.log('Showing step:', step);
+    
     // Hide all steps
     const steps = document.querySelectorAll('.form-step');
     steps.forEach(s => s.classList.remove('active'));
@@ -157,12 +180,17 @@ function validateCurrentStep() {
     const requiredFields = currentStepElement.querySelectorAll('[required]');
     let isValid = true;
     
+    console.log(`Validating step ${currentStep}, found ${requiredFields.length} required fields`);
+    
     requiredFields.forEach(field => {
-        if (!validateField({target: field})) {
+        const fieldValid = validateField({target: field});
+        console.log(`Field ${field.name}: ${fieldValid ? 'valid' : 'invalid'}`);
+        if (!fieldValid) {
             isValid = false;
         }
     });
     
+    console.log(`Step ${currentStep} validation result:`, isValid);
     return isValid;
 }
 
@@ -237,41 +265,20 @@ function clearFieldError(e) {
     }
 }
 
-// File Validation
-function validateFile(e) {
-    const file = e.target.files[0];
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-    
-    if (file) {
-        // Check file size
-        if (file.size > maxSize) {
-            showFieldError(e.target, 'El archivo no puede ser mayor a 5MB');
-            e.target.value = '';
-            return false;
-        }
-        
-        // Check file type
-        if (!allowedTypes.includes(file.type)) {
-            showFieldError(e.target, 'Solo se permiten archivos PDF, DOC o DOCX');
-            e.target.value = '';
-            return false;
-        }
-        
-        clearFieldError(e);
-        return true;
-    }
-}
 
 // Form Submission
 function handleFormSubmit(e) {
     e.preventDefault();
     
+    console.log('Form submission started');
+    
     if (formSubmitted) {
-        return; // Prevent double submission
+        console.log('Form already submitted, preventing double submission');
+        return;
     }
     
     if (!validateCurrentStep()) {
+        console.log('Final validation failed');
         return;
     }
     
@@ -282,8 +289,16 @@ function handleFormSubmit(e) {
     submitBtn.disabled = true;
     formSubmitted = true;
     
+    console.log('Submitting to:', e.target.action);
+    
     // Submit form via Formspree
     const formData = new FormData(e.target);
+    
+    // Log form data for debugging
+    console.log('Form data:');
+    for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+    }
     
     fetch(e.target.action, {
         method: 'POST',
@@ -293,16 +308,25 @@ function handleFormSubmit(e) {
         }
     })
     .then(response => {
+        console.log('Response status:', response.status);
+        console.log('Response ok:', response.ok);
+        
         if (response.ok) {
-            showSuccessMessage();
-            trackEvent('form_submitted', 'conversion');
+            return response.json();
         } else {
-            throw new Error('Error en el envío');
+            return response.json().then(data => {
+                throw new Error(data.error || 'Error en el envío');
+            });
         }
     })
+    .then(data => {
+        console.log('Success response:', data);
+        showSuccessMessage();
+        trackEvent('form_submitted', 'conversion');
+    })
     .catch(error => {
-        showErrorMessage();
-        console.error('Error:', error);
+        console.error('Error details:', error);
+        showErrorMessage(error.message);
     })
     .finally(() => {
         submitBtn.textContent = originalText;
@@ -328,13 +352,14 @@ function showSuccessMessage() {
     }, 5000);
 }
 
-function showErrorMessage() {
+function showErrorMessage(errorDetails = '') {
     const modal = document.querySelector('.modal-content');
     modal.innerHTML = `
         <div style="padding: 40px; text-align: center;">
             <div style="font-size: 4rem; margin-bottom: 20px;">❌</div>
             <h2 style="color: #f44336; margin-bottom: 16px;">Error al enviar</h2>
             <p style="margin-bottom: 24px; color: #666;">Ha ocurrido un error. Por favor, inténtalo de nuevo o contáctanos directamente.</p>
+            ${errorDetails ? `<p style="font-size: 0.8rem; color: #999; margin-bottom: 24px;">Error: ${errorDetails}</p>` : ''}
             <div style="margin-bottom: 24px;">
                 <a href="mailto:venteparasuiza@gmail.com" style="display: inline-block; background: #d32f2f; color: white; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; margin-right: 12px;">Enviar Email</a>
                 <button onclick="location.reload()" style="background: #666; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;">Reintentar</button>
@@ -496,14 +521,6 @@ function setupPerformanceOptimizations() {
 function trackEvent(eventName, category, label = '') {
     // Basic tracking - can be extended with Google Analytics, etc.
     console.log(`Event: ${eventName}, Category: ${category}, Label: ${label}`);
-    
-    // If Google Analytics is added later:
-    // if (typeof gtag !== 'undefined') {
-    //     gtag('event', eventName, {
-    //         event_category: category,
-    //         event_label: label
-    //     });
-    // }
 }
 
 function trackPageView() {
@@ -575,19 +592,6 @@ function setupMobileOptimizations() {
 
 // Initialize mobile optimizations
 document.addEventListener('DOMContentLoaded', setupMobileOptimizations);
-
-// Service Worker Registration (for PWA features)
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-            .then(registration => {
-                console.log('SW registered: ', registration);
-            })
-            .catch(registrationError => {
-                console.log('SW registration failed: ', registrationError);
-            });
-    });
-}
 
 // Export functions for global access
 window.openModal = openModal;
